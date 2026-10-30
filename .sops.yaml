@@ -1,0 +1,125 @@
+keys:
+  # Личный age-ключ, не привязанный ни к одной машине. Приватная часть лежит
+  # в ~/.config/sops/age/keys.txt (и в бэкапе вне этого компьютера), в git не
+  # попадает. Нужен по двум причинам:
+  #   1) редактировать секреты можно от пользователя, без doas -- host-ключи
+  #      ниже читаются только root'ом;
+  #   2) это единственный выход, переживающий переустановку любого хоста:
+  #      host-ключ генерируется заново при установке, и все секреты,
+  #      зашифрованные только на него, становятся нерасшифровываемыми
+  #      навсегда.
+  # Должен входить в КАЖДОЕ правило ниже -- иначе при потере хоста файл уже
+  # не открыть.
+  - &admin age1dp4pgypvg4u87x8evpckv5452cgamrnr28dfy5fyv0cnjay4h38ql2w6pe
+
+  # age pubkey derived from this laptop's own SSH host key
+  # (/etc/ssh/ssh_host_ed25519_key) via ssh-to-age -- no separate age
+  # keypair to generate/store/lose, sops.age.sshKeyPaths in
+  # modules/nixos/common.nix points decryption at the same host key.
+  - &laptop age1e7waday4n2ammx8wzdek55gtcvh0c95s6zh2zj8qkcvsq7ca7dmq39pkd7
+
+  # То же самое для сервера, но ключ сгенерирован ЗАРАНЕЕ, до установки
+  # (ssh/server_host_ed25519_key, гитигнорится). Иначе получается курица и
+  # яйцо: sops-nix разворачивает секреты в ходе активации, а host-ключ
+  # появляется только при первой загрузке -- то есть уже после неё. При
+  # установке пара кладётся в /mnt/etc/ssh/ руками, см. docs/repo-notes.md.
+  - &server age1zt2w70dzqzjn9d0ykgx0a8uygarv2n5sumwjpfwsz5wz3c8ve5yqeqqwhs
+
+  # Временный хост forge (платформа от старого ПК, hosts/forge). Ключ тоже
+  # сгенерирован ЗАРАНЕЕ: ssh/forge_host_ed25519_key (гитигнорится), при
+  # установке пара кладётся в /mnt/etc/ssh/ руками — см. docs/install-forge.md.
+  #
+  # Получатель только secrets/common.yaml (URL подписок mihomo + ключ
+  # OmniRoute). В secrets/xray/* сознательно НЕ внесён: локального xray на
+  # этой машине нет, mihomo работает только с подписками
+  # (services.mihomoBalancer.xrayUpstream = false).
+  - &forge age1zv4rafmk0kna8ymy4cmxjc5feyx4p7axr5rhfmzqwc6xhshxzgkq2xw984
+
+  # VPS: host-ключи тоже сгенерированы заранее на ноутбуке
+  # (ssh/<host>_host_ed25519_key, гитигнорятся) и кладутся при установке
+  # через nixos-anywhere --extra-files.
+  #
+  # Ротация 2026-10-22 (инцидент VMmanager 6, 2026-10-17 -- оба хостера
+  # читали диски ВМ напрямую с гипервизора, старые host-ключи считаются
+  # скомпрометированными). Старые ключи НЕ входят ни в один key_group ниже --
+  # после переустановки обоих VPS (nixos-anywhere с новыми
+  # ssh/<host>_host_ed25519_key) они не смогут расшифровать ничего нового.
+  # Старые публичные ключи оставлены в комментарии только для истории:
+  #   ru-edge (был): age1guvm6ynsppqdzxceaez8sh65nyqqm7x5xlfntgx2atzkzjccl38sys70t9
+  #   nl-exit (был): age1c8c8va76xy6jm8qwj5mcx6jsdg0xc6f4qhnpnfwn836k4hnesc3qgcs4kn
+  - &ru-edge age1qgs42s5quhhwuu7d3qhkn687jaxgz3pla9j5f8ks6472m2w6zv8qznc9pd
+  - &nl-exit age1l3x835x2pfad7mklwt4af30t0esfsvk8u5zyxtvnxk44pfsduuwqadrcgh
+
+# ВАЖНО: sops применяет ПЕРВОЕ совпавшее правило, а не самое точное.
+# Поэтому частные пути идут раньше общих, и никакого catch-all
+# `secrets/.*\.yaml$` здесь больше нет -- он перекрывал бы всё остальное.
+creation_rules:
+  # Общее для всех VPS: хэш пароля nix и параметры связки portal↔bridge
+  # (UUID моста, публичный ключ Reality, shortId, путь xhttp).
+  - path_regex: secrets/vps\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *ru-edge
+          - *nl-exit
+
+  # Только ru-edge: приватный ключ Reality и UUID клиентов. nl-exit их не
+  # видит — утечка с NL не раскрывает ни сервер, ни клиентов.
+  - path_regex: secrets/ru-edge\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *ru-edge
+
+  # Секреты, нужные только в графической сессии ноутбука (токен Home Assistant
+  # для виджета noctalia, ключ Obsidian Local REST API). Серверу не нужны и
+  # намеренно ему недоступны: он крутит виртуалки с лабами и смотрит в сеть,
+  # то есть по рискам «грязнее» ноутбука.
+  - path_regex: secrets/laptop\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *laptop
+
+  # Секреты, нужные только серверу (например, будущий токен HuggingFace для
+  # скачивания моделей). Файла пока нет -- правило заведено заранее, чтобы
+  # первый серверный секрет просто лёг куда надо.
+  - path_regex: secrets/server\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *server
+
+  # Секреты, нужные только forge. Файла пока нет — правило заведено заранее,
+  # чтобы первый такой секрет лёг куда надо.
+  - path_regex: secrets/forge\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *forge
+
+  # Общие для домашних хостов (laptop, server и временный forge).
+  #
+  # ВАЖНО: добавление *forge в этот список само по себе ничего не расшифровывает
+  # — файл остаётся зашифрованным на старых получателей. Нужен один раз:
+  #   sops updatekeys secrets/common.yaml
+  # (от пользователя, с его admin-ключом из ~/.config/sops/age/keys.txt).
+  # До этого forge не сможет активировать конфигурацию с secretsReady = true.
+  - path_regex: secrets/common\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *laptop
+          - *server
+          - *forge
+
+  # Клиентские конфиги xray. Шифруются целиком, как binary, а не как JSON:
+  # в режиме JSON sops зашифровал бы только значения и оставил открытым
+  # дерево ключей (outbounds / streamSettings / realitySettings), по которому
+  # и так всё понятно. См. CLAUDE.md.
+  - path_regex: secrets/xray/.*$
+    key_groups:
+      - age:
+          - *admin
+          - *laptop
+          - *server

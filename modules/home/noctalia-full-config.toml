@@ -1,0 +1,305 @@
+config_version = 15
+
+[audio]
+enable_sounds = true
+
+[backdrop]
+enabled = true
+
+[bar]
+order = [ "default" ]
+
+    [bar.default]
+    capsule = true
+    center = [ "workspaces" ]
+    end = [
+        "tray",
+        "keyboard_layout",
+        "notifications",
+        "clipboard",
+        "hyprmagnifier",
+        "caffeine",
+        "battery",
+        "sysmon",
+        "clock",
+        "status",
+        "nix-monitor",
+        "bar",
+        "control-center"
+    ]
+    margin_ends = 0
+    position = "bottom"
+    radius = 8
+    start = [ "launcher", "network", "bluetooth", "power_profile", "media" ]
+
+        [bar.default.dead_zone.actions]
+        scroll_down = "exec noctalia msg volume-down"
+        scroll_up = "exec noctalia msg volume-up"
+
+[[control_center.shortcuts]]
+type = "wifi"
+
+[[control_center.shortcuts]]
+type = "bluetooth"
+
+[[control_center.shortcuts]]
+type = "caffeine"
+
+[[control_center.shortcuts]]
+type = "notification"
+
+[[control_center.shortcuts]]
+type = "mic_mute"
+
+[[control_center.shortcuts]]
+type = "session"
+
+[dock]
+active_monitor_only = true
+auto_hide = true
+enabled = true
+launcher_position = "start"
+reserve_space = false
+
+[idle]
+behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
+
+    [idle.behavior.lock]
+    action = "lock"
+    enabled = true
+    timeout = 600.0
+
+    [idle.behavior.lock-and-suspend]
+    action = "lock_and_suspend"
+    enabled = true
+    timeout = 900.0
+
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = true
+    timeout = 660.0
+
+[keybinds]
+down = [ "Down", "Ctrl+j", "Ctrl+Cyrillic_o" ]
+left = [ "Left", "Ctrl+h", "Ctrl+Cyrillic_er" ]
+right = [ "Right", "Ctrl+l", "Ctrl+Cyrillic_de" ]
+up = [ "Up", "Ctrl+k", "Ctrl+Cyrillic_el" ]
+
+[location]
+address = "Saint-Petersburg, Russia"
+
+[lockscreen]
+blur_intensity = 0.79999998211860657
+blurred_desktop = true
+tint_intensity = 0.54999998770654202
+transition = [ "disc" ]
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [
+    "lockscreen-login-box@HDMI-A-2",
+    "lockscreen-login-box@eDP-1",
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000002",
+    "lockscreen-widget-0000000000000003",
+    "lockscreen-widget-0000000000000004"
+]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-2"]
+    box_height = 70.0
+    box_width = 384.0
+    cx = 800.00006103515625
+    cy = 639.0
+    output = "HDMI-A-2"
+    placement_height = 900.0
+    placement_width = 1600.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-2".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 640.0
+    cy = 500.5
+    output = "eDP-1"
+    placement_height = 720.0
+    placement_width = 1280.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 128.0
+    box_width = 96.0
+    cx = 656.0
+    cy = 482.0
+    output = "HDMI-A-2"
+    placement_height = 900.0
+    placement_width = 1600.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        clock_style = "digital"
+        format = "{:%H\\n%M}"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
+    box_height = 128.0
+    box_width = 272.0
+    cx = 856.00006103515625
+    cy = 482.0
+    output = "HDMI-A-2"
+    placement_height = 900.0
+    placement_width = 1600.0
+    rotation = 0.0
+    type = "media_player"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
+    box_height = 128.0
+    box_width = 160.0
+    cx = 912.0
+    cy = 338.0
+    output = "HDMI-A-2"
+    placement_height = 900.0
+    placement_width = 1600.0
+    rotation = 0.0
+    type = "weather"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
+        show_forecast = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
+    box_height = 128.0
+    box_width = 208.0
+    cx = 712.0
+    cy = 338.0
+    output = "HDMI-A-2"
+    placement_height = 900.0
+    placement_width = 1600.0
+    rotation = 0.0
+    type = "sysmon"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
+        display = "graph"
+        gauge_layout = "horizontal"
+        stat = "cpu_usage"
+        stat2 = "cpu_temp"
+
+[nightlight]
+enabled = true
+force = true
+temperature_day = 3300
+
+[notification]
+layer = "overlay"
+
+[plugin_settings."avivbintangaringga/nix-monitor"]
+branch = "nixos-26.05"
+clean_command = "nix-collect-garbage --delete-older-than 7d"
+
+[plugin_settings."pozzoo/hassio"]
+ha_token = "REDACTED"
+ha_url = "https://homeassistant.lan:8123"
+shortcut_entity_1 = "light.bedroom_light"
+shortcut_entity_2 = "light.lamp"
+shortcut_entity_3 = "climate.152832117791498_climate"
+shortcut_entity_4 = "input_boolean.konditsioner_taimaut_nepreryvnogo_obduva"
+
+[plugins]
+enabled = [ "noctalia/timer", "avivbintangaringga/nix-monitor" ]
+
+[shell]
+avatar_path = "/home/nix/Downloads/IMG_20250105_045031_225.jpg"
+font_family = "JetBrains Mono"
+lang = "en"
+password_style = "random"
+screen_time_enabled = true
+
+    [shell.panel]
+    open_near_click_control_center = true
+    session_placement = "floating"
+    session_position = "center"
+
+[theme]
+builtin = "Tokyo-Night"
+mode = "dark"
+source = "wallpaper"
+wallpaper_scheme = "m3-content"
+
+    [theme.templates]
+    builtin_ids = [ "alacritty", "cava", "gtk3", "gtk4", "ghostty", "kcolorscheme", "kitty", "niri", "qt" ]
+
+[wallpaper]
+fill_color = "surface_variant"
+
+[weather]
+refresh_minutes = 5
+
+[widget.bar]
+type = "icefish/phone-connect:bar"
+
+[widget.hyprmagnifier]
+enabled = false
+glyph = "search"
+type = "custom_button"
+
+    [widget.hyprmagnifier.actions]
+    left = "exec hyprmagnifier"
+
+[widget.launcher]
+glyph = "layout-grid"
+
+[widget.nix-monitor]
+show_text = false
+type = "avivbintangaringga/nix-monitor:nix-monitor"
+
+[widget.status]
+type = "pozzoo/hassio:status"
+
+[widget.sysmon]
+stat = "cpu_temp"
+
+[widget.tray]
+drawer = true
+
+[widget.workspaces]
+focused_output_only = true
+hide_when_empty = true
+show_labels = false
